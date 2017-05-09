@@ -48,7 +48,16 @@ define( 'TOC_POSITION_BOTTOM', 3 );
 define( 'TOC_POSITION_AFTER_FIRST_HEADING', 4 );
 define( 'TOC_MIN_START', 2 );
 define( 'TOC_MAX_START', 10 );
+
+// XTEC ************ MODIFICAT - Change default settings
+// 2017.05.04 @xaviernietosanchez
+define( 'TOC_SMOOTH_SCROLL_OFFSET', 40 );
+// ************ ORIGINAL
+/*
 define( 'TOC_SMOOTH_SCROLL_OFFSET', 30 );
+*/
+// ************ FI
+
 define( 'TOC_WRAPPING_NONE', 0 );
 define( 'TOC_WRAPPING_LEFT', 1 );
 define( 'TOC_WRAPPING_RIGHT', 2 );
@@ -85,23 +94,70 @@ if ( !class_exists( 'toc' ) ) :
 			// get options
 			$defaults = array(		// default options
 				'fragment_prefix' => 'i',
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'position' => TOC_POSITION_TOP,
+				// ************ ORIGINAL
+				/*
 				'position' => TOC_POSITION_BEFORE_FIRST_HEADING,
+				*/
+				// ************ FI
+
 				'start' => 4,
 				'show_heading_text' => true,
+
+				
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.16 @xaviernietosanchez
+				'heading_text' => __('Contents','table-of-contents-plus'),
+				// ************ ORIGINAL
+				/*
 				'heading_text' => 'Contents',
+				*/
+				// ************ FI
+
 				'auto_insert_post_types' => array('page'),
 				'show_heirarchy' => true,
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'ordered_list' => false,
+				'smooth_scroll' => true,
+				// ************ ORIGINAL
+				/*
 				'ordered_list' => true,
 				'smooth_scroll' => false,
+				*/
+				// ************ FI
+
 				'smooth_scroll_offset' => TOC_SMOOTH_SCROLL_OFFSET,
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'visibility' => false,
+				// ************ ORIGINAL
+				/*
 				'visibility' => true,
+				*/
+				//************ FI
+
 				'visibility_show' => 'show',
 				'visibility_hide' => 'hide',
 				'visibility_hide_by_default' => false,
 				'width' => 'Auto',
 				'width_custom' => '275',
 				'width_custom_units' => 'px',
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'wrapping' => TOC_WRAPPING_RIGHT,
+				// ************ ORIGINAL
+				/*
 				'wrapping' => TOC_WRAPPING_NONE,
+				 */
+				// ************ FI
+
 				'font_size' => '95',
 				'font_size_units' => '%',
 				'theme' => TOC_THEME_GREY,
@@ -462,8 +518,18 @@ if ( !class_exists( 'toc' ) ) :
 			wp_enqueue_script( 'toc-front' );
 			if ( $this->options['show_heading_text'] && $this->options['visibility'] ) {
 				$width = ( $this->options['width'] != 'User defined' ) ? $this->options['width'] : $this->options['width_custom'] . $this->options['width_custom_units'];
+
+				// XTEC ************ MODIFICAT - Translate options here because they cannot be translated in constructor
+				// 2017.05.17 @aginard
+				$js_vars['visibility_show'] = ($this->options['visibility_show'] == 'show') ? __( 'show', 'table-of-contents-plus') : esc_js($this->options['visibility_show']);
+				$js_vars['visibility_hide'] = ($this->options['visibility_hide'] == 'hide') ? __( 'hide', 'table-of-contents-plus') : esc_js($this->options['visibility_hide']);
+				// ************ ORIGINAL
+				/*
 				$js_vars['visibility_show'] = esc_js($this->options['visibility_show']);
 				$js_vars['visibility_hide'] = esc_js($this->options['visibility_hide']);
+				 */
+				// ************ FI
+
 				if ( $this->options['visibility_hide_by_default'] ) $js_vars['visibility_hide_by_default'] = true;
 				$js_vars['width'] = esc_js($width);
 			}
@@ -490,6 +556,16 @@ if ( !class_exists( 'toc' ) ) :
 		{
 			wp_register_script( 'toc_admin_script', $this->path . '/admin.js' );
 			wp_register_style( 'toc_admin_style', $this->path . '/admin.css' );
+
+			// XTEC ************ AFEGIT - Add localization support to js files
+			// 2017.05.16 @xaviernietosanchez
+			$translation_array = array(
+				'hide' => __( 'hide', 'table-of-contents-plus' ),
+				'show' => __( 'show', 'table-of-contents-plus' )
+			);
+			wp_localize_script( 'toc_admin_script', 'trans', $translation_array );
+			// ************ FI
+
 		}
 		
 		
@@ -683,8 +759,31 @@ if ( !class_exists( 'toc' ) ) :
 
 <ul id="tabbed-nav">
 	<li><a href="#tab1"><?php _e('Main Options', 'table-of-contents-plus'); ?></a></li>
+
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	if ( is_xtecadmin() ){
+	?>
+	<!--
+	// ************ FI
+	-->
+
 	<li><a href="#tab2"><?php _e('Sitemap', 'table-of-contents-plus'); ?></a></li>
 	<li class="url"><a href="http://dublue.com/plugins/toc/#Help"><?php _e('Help', 'table-of-contents-plus'); ?></a></li>
+
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	}
+	?>
+	<!--
+	// ************ FI
+	-->
 </ul>
 <div class="tab_container">
 	<div id="tab1" class="tab_content">
@@ -722,12 +821,31 @@ if ( !class_exists( 'toc' ) ) :
 	<th><?php _e('Auto insert for the following content types', 'table-of-contents-plus'); ?></th>
 	<td><?php
 			foreach (get_post_types() as $post_type) {
+
+				// XTEC ************ AFEGIT - Change default settings
+				// 2017.05.11 @xaviernietosanchez
+				if ( $post_type == 'post' || $post_type == 'page' || is_xtecadmin() ){
+				// ************ FI
+
 				// make sure the post type isn't on the exclusion list
 				if ( !in_array($post_type, $this->exclude_post_types) ) {
 					echo '<input type="checkbox" value="' . $post_type . '" id="auto_insert_post_types_' . $post_type .'" name="auto_insert_post_types[]"';
 					if ( in_array($post_type, $this->options['auto_insert_post_types']) ) echo ' checked="checked"';
+
+					// XTEC ************ MODIFICAT - Add localization support to strings
+					// 2017.05.16 @xaviernietosanchez
+					echo ' /><label for="auto_insert_post_types_' . $post_type .'"> ' . __($post_type,'table-of-contents-plus') . '</label><br />';
+					// ************ ORIGINAL
+					/*
 					echo ' /><label for="auto_insert_post_types_' . $post_type .'"> ' . $post_type . '</label><br />';
+					*/
+					// ************ FI
 				}
+
+				// XTEC ************ AFEGIT - Change default settings
+				// 2017.05.11 @xaviernietosanchez
+				}
+				// ************ FI
 			}
 ?>
 </tr>
@@ -738,7 +856,20 @@ if ( !class_exists( 'toc' ) ) :
 	<td>
 		<input type="checkbox" value="1" id="show_heading_text" name="show_heading_text"<?php if ( $this->options['show_heading_text'] ) echo ' checked="checked"'; ?> /><label for="show_heading_text"> <?php _e('Show title on top of the table of contents', 'table-of-contents-plus'); ?></label><br />
 		<div class="more_toc_options<?php if ( !$this->options['show_heading_text'] ) echo ' disabled'; ?>">
-			<input type="text" class="regular-text" value="<?php echo htmlentities( $this->options['heading_text'], ENT_COMPAT, 'UTF-8' ); ?>" id="heading_text" name="heading_text" />
+
+			<!--
+			// XTEC ************ Modificat - Add localization support to strings
+			// 2017.05.12 @xaviernietosanchez
+			-->
+			<input type="text" class="regular-text" value="<?php echo __(htmlentities( $this->options['heading_text'], ENT_COMPAT, 'UTF-8' ),'table-of-contents-plus'); ?>" id="heading_text" name="heading_text" />
+			<!--
+			// ************ ORIGINAL
+			<?php /*
+			<input type="text" class="regular-text" value="<?php echo zhtmlentities( $this->options['heading_text'], ENT_COMPAT, 'UTF-8' ); ?>" id="heading_text" name="heading_text" />
+			*/ ?>
+			// ************ FI
+			-->
+
 			<span class="description"><label for="heading_text"><?php _e('Eg: Contents, Table of Contents, Page Contents', 'table-of-contents-plus'); ?></label></span><br /><br />
 			
 			<input type="checkbox" value="1" id="visibility" name="visibility"<?php if ( $this->options['visibility'] ) echo ' checked="checked"'; ?> /><label for="visibility"> <?php _e( 'Allow the user to toggle the visibility of the table of contents', 'table-of-contents-plus'); ?></label><br />
@@ -848,6 +979,17 @@ if ( !class_exists( 'toc' ) ) :
 		</select>
 	</td>
 </tr>
+
+<!-- 
+// XTEC ************ AFEGIT - Change default settings
+// 2017.05.11 @xaviernietosanchez
+-->
+<?php
+if ( is_xtecadmin() ){
+?>
+<!--
+// ************ FI
+-->
 <tr>
 	<th><?php 
 	/* translators: appearance / colour / look and feel options */
@@ -920,6 +1062,17 @@ if ( !class_exists( 'toc' ) ) :
 		</div>
 	</td>
 </tr>
+<!--
+// XTEC ************ AFEGIT - Change default settings
+// 2017.05.04 @xaviernietosanchez
+-->
+<?php
+}
+?>
+<!--
+// ************ FI
+-->
+
 </tbody>
 </table>
 
@@ -928,6 +1081,17 @@ if ( !class_exists( 'toc' ) ) :
 	<h4><?php _e('Power options', 'table-of-contents-plus'); ?></h4>
 	<table class="form-table">
 	<tbody>
+
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	if ( is_xtecadmin() ){
+	?>
+	<!--
+	// ************ FI
+	-->
 	<tr>
 		<th><label for="lowercase"><?php _e('Lowercase', 'table-of-contents-plus'); ?></label></th>
 		<td><input type="checkbox" value="1" id="lowercase" name="lowercase"<?php if ( $this->options['lowercase'] ) echo ' checked="checked"'; ?> /><label for="lowercase"> <?php _e('Ensure anchors are in lowercase', 'table-of-contents-plus'); ?></label></td>
@@ -948,6 +1112,17 @@ if ( !class_exists( 'toc' ) ) :
 		<th><label for="bullet_spacing"><?php _e('Preserve theme bullets', 'table-of-contents-plus'); ?></label></th>
 		<td><input type="checkbox" value="1" id="bullet_spacing" name="bullet_spacing"<?php if ( $this->options['bullet_spacing'] ) echo ' checked="checked"'; ?> /><label for="bullet_spacing"> <?php _e('If your theme includes background images for unordered list elements, enable this to support them', 'table-of-contents-plus'); ?></label></td>
 	</tr>
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	}
+	?>
+	<!--
+	// ************ FI
+	-->
+
 	<tr>
 		<th><?php _e('Heading levels', 'table-of-contents-plus'); ?></th>
 		<td>
@@ -957,7 +1132,15 @@ if ( !class_exists( 'toc' ) ) :
 			for ($i = 1; $i <= 6; $i++) {
 				echo '<input type="checkbox" value="' . $i . '" id="heading_levels' . $i .'" name="heading_levels[]"';
 				if ( in_array($i, $this->options['heading_levels']) ) echo ' checked="checked"';
+
+				// XTEC ************ MODIFICAT - Add localization support
+				// 2017.05.16 @xaviernietosanchez
+				echo ' /><label for="heading_levels' . $i .'"> ' . __('heading ','table-of-contents-plus') . $i . ' - h' . $i . '</label><br />';
+				// ************ ORIGINAL
+				/*
 				echo ' /><label for="heading_levels' . $i .'"> ' . __('heading ') . $i . ' - h' . $i . '</label><br />';
+				*/
+				// ************ FI
 			}
 ?>
 		</td>
@@ -974,6 +1157,17 @@ if ( !class_exists( 'toc' ) ) :
 			</ul>
 		</td>
 	</tr>
+
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	if ( is_xtecadmin() ){
+	?>
+	<!--
+	// ************ FI
+	-->
 	<tr id="smooth_scroll_offset_tr" class="<?php if ( !$this->options['smooth_scroll'] ) echo 'disabled'; ?>">
 		<th><label for="smooth_scroll_offset"><?php _e('Smooth scroll top offset', 'table-of-contents-plus'); ?></label></th>
 		<td>
@@ -981,6 +1175,17 @@ if ( !class_exists( 'toc' ) ) :
 			<label for="smooth_scroll_offset"><?php _e('If you have a consistent menu across the top of your site, you can adjust the top offset to stop the headings from appearing underneath the top menu. A setting of 30 accommodates the WordPress admin bar. This setting appears after you have enabled smooth scrolling from above.', 'table-of-contents-plus'); ?></label>
 		</td>
 	</tr>
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	}
+	?>
+	<!--
+	// ************ FI
+	-->
+
 	<tr>
 		<th><label for="restrict_path"><?php _e('Restrict path', 'table-of-contents-plus'); ?></label></th>
 		<td>
@@ -991,6 +1196,17 @@ if ( !class_exists( 'toc' ) ) :
 			_e('Eg: /wiki/, /corporate/annual-reports/', 'table-of-contents-plus'); ?></span></label>
 		</td>
 	</tr>
+
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	if ( is_xtecadmin() ){
+	?>
+	<!--
+	// ************ FI
+	-->
 	<tr>
 		<th><label for="fragment_prefix"><?php _e('Default anchor prefix', 'table-of-contents-plus'); ?></label></th>
 		<td>
@@ -1002,6 +1218,17 @@ if ( !class_exists( 'toc' ) ) :
 			_e('Eg: i, toc_index, index, _', 'table-of-contents-plus'); ?></span></label>
 		</td>
 	</tr>
+	<!-- 
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+	-->
+	<?php
+	}
+	?>
+	<!--
+	// ************ FI
+	-->
+
 	</tbody>
 	</table>
 

@@ -18,10 +18,23 @@ jQuery(document).ready(function($) {
 	$('h3 span.show_hide a').click(function(event) {
 		event.preventDefault();
 		$( $(this).attr('href') ).toggle('fast');
+
+		// XTEC ************ MODIFICAT - Add localization support
+		// 2017.05.16 @xaviernietosanchez
+		if ( $(this).text() == trans['show'] ){
+			$(this).text(trans['hide']);
+		}else{
+			$(this).text(trans['show']);
+		}
+		// ************ ORIGINAL
+		/*
 		if ( $(this).text() == 'show' )
 			$(this).text('hide');
 		else
 			$(this).text('show');
+		*/
+		// ************ FI
+
 	});
 	
 	$('input#show_heading_text, input#visibility').click(function() {
