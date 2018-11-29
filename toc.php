@@ -174,7 +174,7 @@ if ( !class_exists( 'toc' ) ) :
 				'exclude_css' => false,
 				'exclude' => '',
 				'heading_levels' => array('1', '2', '3', '4', '5', '6'),
-				'restrict_path' => '',
+				'restrict_path' => '/docs/',
 				'css_container_class' => '',
 				'sitemap_show_page_listing' => true,
 				'sitemap_show_category_listing' => true,
