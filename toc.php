@@ -1686,21 +1686,21 @@ if ( is_xtecadmin() ){
             $this->collision_collector = [];
 
             if ( is_array($find) && is_array($replace) && $content ) {
-                // get all headings
+                // get all headings, excluding tables
                 // the html spec allows for a maximum of 6 heading depths
-                if ( preg_match_all('/(<h([1-6]{1})[^>]*>).*<\/h\2>/msuU', $content, $matches, PREG_SET_ORDER) ) {
-
-                    // remove undesired headings (if any) as defined by heading_levels
-                    if ( count($this->options['heading_levels']) != 6 ) {
-                        $new_matches = array();
-                        for ($i = 0; $i < count($matches); $i++) {
-                            if ( in_array($matches[$i][2], $this->options['heading_levels']) )
-                                $new_matches[] = $matches[$i];
+                if ( !preg_match_all('/<table.*?>(.*?)<\/table>/si', $content, $matches)) {
+                    if ( preg_match_all('/(<h([1-6]{1})[^>]*>).*<\/h\2>/msuU', $content, $matches, PREG_SET_ORDER) ) {
+                        // remove undesired headings (if any) as defined by heading_levels
+                        if ( count($this->options['heading_levels']) != 6 ) {
+                            $new_matches = array();
+                            for ($i = 0; $i < count($matches); $i++) {
+                                if ( in_array($matches[$i][2], $this->options['heading_levels']) )
+                                    $new_matches[] = $matches[$i];
+                            }
+                            $matches = $new_matches;
                         }
-                        $matches = $new_matches;
                     }
                 }
-
                 // remove empty headings
                 $new_matches = [];
                 for ($i = 0; $i < count($matches); $i++) {
@@ -1710,7 +1710,6 @@ if ( is_xtecadmin() ){
                 if ( count($matches) != count($new_matches) )
                     $matches = $new_matches;
             }
-
             return count($matches);
         }
         //************ FI
@@ -1721,23 +1720,29 @@ if ( is_xtecadmin() ){
 			$items = $css_classes = $anchor = '';
 			$custom_toc_position = strpos($content, '<!--TOC-->');
 			$find = $replace = array();
+			
+			// XTEC ************ MODIFICAT - Check if we display the content with toc
+			// 2019.09.30 @nacho
+			$defined_headers = $this->options['start'];
+			$total_headers = $this->total_headings($find, $replace, $content);
 
-            // XTEC ************ AFEGIT -Get defined headers configurated in TOC+ module
-            // 2019.06.25 @nacho
-            $defined_headers = $this->options['start'];
-            $total_headers = $this->total_headings($find, $replace, $content);
-            //************ FI
-
-            // XTEC ************ MODIFICAT -Check if we display the content with toc
-            // 2019.06.25 @nacho
-            // 2021.04.09 @nacho: To detect if you’re on a WP page use bp_is_blog_page() function
-			if ( ($this->is_eligible($custom_toc_position) || $total_headers >= $defined_headers) && bp_is_blog_page() ) {
-
-			//************ ORIGINAL
-			/*
-			if ( $this->is_eligible($custom_toc_position) ) {
-			*/
-			//************ FI
+			$disable = false;
+			if ( strpos( get_the_content(), '[no_toc]' ) !== false) {
+				$disable = true;
+			}
+		    
+			$type = get_post_type();
+			if ($this->is_eligible($custom_toc_position) ||
+			(
+				($total_headers >= $defined_headers) && (in_array($type, $this->options['auto_insert_post_types'])) && ($disable == false)
+			)
+			) {
+		    
+				//************ ORIGINAL
+				/*
+		        if ( $this->is_eligible($custom_toc_position) ) {
+				*/
+				//************ FI
 
 				$items = $this->extract_headings($find, $replace, $content);
 
@@ -1804,10 +1809,10 @@ if ( is_xtecadmin() ){
 						// add container, toc title and list items
 						$html = '<div id="toc_container" class="' . $css_classes . '">';
 						if ( $this->options['show_heading_text'] ) {
-							$toc_title = htmlentities( $this->options['heading_text'], ENT_COMPAT, 'UTF-8' );
+							$toc_title = $this->options['heading_text'];
 							if ( strpos($toc_title, '%PAGE_TITLE%') !== false ) $toc_title = str_replace( '%PAGE_TITLE%', get_the_title(), $toc_title );
 							if ( strpos($toc_title, '%PAGE_NAME%') !== false ) $toc_title = str_replace( '%PAGE_NAME%', get_the_title(), $toc_title );
-							$html .= '<p class="toc_title">' . $toc_title . '</p>';
+							$html .= '<p class="toc_title">' . htmlentities( $toc_title, ENT_COMPAT, 'UTF-8' ) . '</p>';
 						}
 						$html .= '<ul class="toc_list">' . $items . '</ul></div>' . "\n";
 						
