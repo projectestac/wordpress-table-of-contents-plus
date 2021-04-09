@@ -1730,13 +1730,14 @@ if ( is_xtecadmin() ){
 
             // XTEC ************ MODIFICAT -Check if we display the content with toc
             // 2019.06.25 @nacho
-            if ($this->is_eligible($custom_toc_position) || ($total_headers >= $defined_headers)) {
+            // 2021.04.09 @nacho: To detect if you’re on a WP page use bp_is_blog_page() function
+			if ( ($this->is_eligible($custom_toc_position) || $total_headers >= $defined_headers) && bp_is_blog_page() ) {
 
-                //************ ORIGINAL
-                /*
+			//************ ORIGINAL
+			/*
 			if ( $this->is_eligible($custom_toc_position) ) {
-                */
-                //************ FI
+			*/
+			//************ FI
 
 				$items = $this->extract_headings($find, $replace, $content);
 
