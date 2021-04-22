@@ -1615,7 +1615,18 @@ if ( is_xtec_super_admin() ) {
 					( $this->options['include_homepage'] && is_front_page() )
 				) {
 					if ( $this->options['restrict_path'] ) {
+
+                        // XTEC ************ MODIFICAT - Fixed a bug when deciding whether the table of contents is displayed or not
+                        // 2021.04.22 @aginard
+
+						if ( strpos($_SERVER['REQUEST_URI'], $this->options['restrict_path']) === false )
+
+                        // ************ ORIGINAL
+                        /*
 						if ( strpos($_SERVER['REQUEST_URI'], $this->options['restrict_path']) === 0 )
+                        */
+                        // ************ FI
+
 							return true;
 						else
 							return false;
@@ -1628,45 +1639,6 @@ if ( is_xtec_super_admin() ) {
 			}
 		}
 		
-        // XTEC ************ AFEGIT - This function returns the number of total headings from the html formatted $content.
-        // 2019.06.25 @nacho
-        public function total_headings(&$find, &$replace, $content = '') {
-            $matches = [];
-
-            // reset the internal collision collection as the_content may have been triggered elsewhere
-            // eg by themes or other plugins that need to read in content such as metadata fields in
-            // the head html tag, or to provide descriptions to twitter/facebook
-            $this->collision_collector = [];
-
-            if ( is_array($find) && is_array($replace) && $content ) {
-                // get all headings, excluding tables
-                // the html spec allows for a maximum of 6 heading depths
-                if ( !preg_match_all('/<table.*?>(.*?)<\/table>/si', $content, $matches)) {
-                    if ( preg_match_all('/(<h([1-6]{1})[^>]*>).*<\/h\2>/msuU', $content, $matches, PREG_SET_ORDER) ) {
-                        // remove undesired headings (if any) as defined by heading_levels
-                        if ( count($this->options['heading_levels']) != 6 ) {
-                            $new_matches = array();
-                            for ($i = 0; $i < count($matches); $i++) {
-                                if ( in_array($matches[$i][2], $this->options['heading_levels']) )
-                                    $new_matches[] = $matches[$i];
-                            }
-                            $matches = $new_matches;
-                        }
-                    }
-                }
-                // remove empty headings
-                $new_matches = [];
-                for ($i = 0; $i < count($matches); $i++) {
-                    if ( trim( strip_tags($matches[$i][0]) ) != false )
-                        $new_matches[] = $matches[$i];
-                }
-                if ( count($matches) != count($new_matches) )
-                    $matches = $new_matches;
-            }
-            return count($matches);
-        }
-        //************ FI
-		
 		function the_content( $content )
 		{
 			global $post;
@@ -1674,30 +1646,7 @@ if ( is_xtec_super_admin() ) {
 			$custom_toc_position = strpos($content, '<!--TOC-->');
 			$find = $replace = array();
 			
-			// XTEC ************ MODIFICAT - Check if we display the content with toc
-			// 2019.09.30 @nacho
-			$defined_headers = $this->options['start'];
-			$total_headers = $this->total_headings($find, $replace, $content);
-
-			$disable = false;
-			if ( strpos( get_the_content(), '[no_toc]' ) !== false) {
-				$disable = true;
-			}
-		    
-			$type = get_post_type();
-			if ($this->is_eligible($custom_toc_position) ||
-			(
-				($total_headers >= $defined_headers) && (in_array($type, $this->options['auto_insert_post_types'])) && ($disable == false)
-			)
-			) {
-		    
-				//************ ORIGINAL
-				/*
-
 			if ( $this->is_eligible($custom_toc_position) ) {
-				
-				*/
-				//************ FI
 
 				$items = $this->extract_headings($find, $replace, $content);
 
