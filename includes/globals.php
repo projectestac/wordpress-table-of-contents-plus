@@ -1,13 +1,22 @@
 <?php
 
-define( 'TOC_VERSION', '2309' );
+define( 'TOC_VERSION', '2002' );
 define( 'TOC_POSITION_BEFORE_FIRST_HEADING', 1 );
 define( 'TOC_POSITION_TOP', 2 );
 define( 'TOC_POSITION_BOTTOM', 3 );
 define( 'TOC_POSITION_AFTER_FIRST_HEADING', 4 );
 define( 'TOC_MIN_START', 2 );
 define( 'TOC_MAX_START', 10 );
+
+// XTEC ************ MODIFICAT - Change default settings
+// 2017.05.04 @xaviernietosanchez
+define( 'TOC_SMOOTH_SCROLL_OFFSET', 40 );
+// ************ ORIGINAL
+/*
 define( 'TOC_SMOOTH_SCROLL_OFFSET', 30 );
+*/
+// ************ FI
+
 define( 'TOC_WRAPPING_NONE', 0 );
 define( 'TOC_WRAPPING_LEFT', 1 );
 define( 'TOC_WRAPPING_RIGHT', 2 );
