@@ -18,23 +18,69 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			// get options
 			$this->defaults = [  // default options
 				'fragment_prefix'                    => 'i',
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'position' => TOC_POSITION_TOP,
+				// ************ ORIGINAL
+				/*
 				'position'                           => TOC_POSITION_BEFORE_FIRST_HEADING,
+				*/
+				// ************ FI
+
 				'start'                              => 4,
 				'show_heading_text'                  => true,
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.16 @xaviernietosanchez
+				'heading_text' => __('Contents','table-of-contents-plus'),
+				// ************ ORIGINAL
+				/*
 				'heading_text'                       => 'Contents',
+				*/
+				// ************ FI
+
 				'auto_insert_post_types'             => [ 'page' ],
 				'show_heirarchy'                     => true,
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'ordered_list' => false,
+				'smooth_scroll' => true,
+				// ************ ORIGINAL
+				/*
 				'ordered_list'                       => true,
 				'smooth_scroll'                      => false,
+				*/
+				// ************ FI
+
 				'smooth_scroll_offset'               => TOC_SMOOTH_SCROLL_OFFSET,
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'visibility' => false,
+				// ************ ORIGINAL
+				/*
 				'visibility'                         => true,
+				*/
+				//************ FI
+
 				'visibility_show'                    => 'show',
 				'visibility_hide'                    => 'hide',
 				'visibility_hide_by_default'         => false,
 				'width'                              => 'Auto',
 				'width_custom'                       => '275',
 				'width_custom_units'                 => 'px',
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2017.05.04 @xaviernietosanchez
+				'wrapping' => TOC_WRAPPING_RIGHT,
+				// ************ ORIGINAL
+				/*
 				'wrapping'                           => TOC_WRAPPING_NONE,
+				*/
+				// ************ FI
+
 				'font_size'                          => '95',
 				'font_size_units'                    => '%',
 				'theme'                              => TOC_THEME_GREY,
@@ -51,7 +97,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 				'exclude_css'                        => false,
 				'exclude'                            => '',
 				'heading_levels'                     => [ 1, 2, 3, 4, 5, 6 ],
+
+				// XTEC ************ MODIFICAT - Change default settings
+				// 2019.03.08 @nacho
+				'restrict_path' => '/docs/',
+				// ************ ORIGINAL
+				/*
 				'restrict_path'                      => '',
+				*/
+				// ************ FI
+
 				'css_container_class'                => '',
 				'sitemap_show_page_listing'          => true,
 				'sitemap_show_category_listing'      => true,
@@ -747,8 +802,27 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 
 <ul id="tabbed-nav">
 	<li><a href="#tab1"><?php esc_html_e( 'Main Options', 'table-of-contents-plus' ); ?></a></li>
+
+	<?php
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+
+	if ( is_xtec_super_admin() ) {
+
+	// ************ FI
+	?>
+
 	<li><a href="#tab2"><?php esc_html_e( 'Sitemap', 'table-of-contents-plus' ); ?></a></li>
 	<li class="url"><a href="https://zedzedzed.github.io/docs/tocplus.html"><?php esc_html_e( 'Help', 'table-of-contents-plus' ); ?></a></li>
+
+	<?php
+	// XTEC ************ AFEGIT - Change default settings
+	// 2017.05.04 @xaviernietosanchez
+
+	}
+
+	// ************ FI
+	?>
 </ul>
 <div class="tab_container">
 	<div id="tab1" class="tab_content">
@@ -790,12 +864,26 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 	<th><?php esc_html_e( 'Auto insert for the following content types', 'table-of-contents-plus' ); ?></th>
 	<td><?php
 	foreach ( get_post_types() as $post_type ) {
+
+		// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+		// 2017.05.11 @xaviernietosanchez
+
+		if ( $post_type == 'post' || $post_type == 'page' || is_xtec_super_admin() ) {
+
+		// ************ FI
+
 		// make sure the post type isn't on the exclusion list
 		if ( ! in_array( $post_type, $this->exclude_post_types, true ) ) {
 			echo '<input type="checkbox" value="' . esc_attr( $post_type ) . '" id="auto_insert_post_types_' . esc_attr( $post_type ) . '" name="auto_insert_post_types[]"';
 			if ( in_array( $post_type, $this->options['auto_insert_post_types'], true ) ) echo ' checked="checked"';
 			echo ' /><label for="auto_insert_post_types_' . esc_attr( $post_type ) . '"> ' . esc_html( $post_type ) . '</label><br>';
 		}
+		// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+		// 2017.05.11 @xaviernietosanchez
+
+		}
+
+		// ************ FI
 	}
 	?>
 	</td>
@@ -917,6 +1005,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 		</select>
 	</td>
 </tr>
+
+<?php
+// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+// 2017.05.11 @xaviernietosanchez
+
+if ( is_xtec_super_admin() ) {
+
+// ************ FI
+?>
+
 <tr>
 	<th><?php
 	/* translators: appearance / colour / look and feel options */
@@ -1034,6 +1132,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 		</div>
 	</td>
 </tr>
+
+<?php
+// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+// 2017.05.04 @xaviernietosanchez
+
+}
+
+// ************ FI
+?>
+
 </tbody>
 </table>
 
@@ -1042,6 +1150,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 	<h4><?php esc_html_e( 'Power options', 'table-of-contents-plus' ); ?></h4>
 	<table class="form-table">
 	<tbody>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	if ( is_xtec_super_admin() ) {
+
+	// ************ FI
+	?>
+
 	<tr>
 		<th><label for="lowercase"><?php esc_html_e( 'Lowercase', 'table-of-contents-plus' ); ?></label></th>
 		<td><input type="checkbox" value="1" id="lowercase" name="lowercase"<?php if ( $this->options['lowercase'] ) echo ' checked="checked"'; ?> /><label for="lowercase"> <?php esc_html_e( 'Ensure anchors are in lowercase', 'table-of-contents-plus' ); ?></label></td>
@@ -1062,6 +1180,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 		<th><label for="bullet_spacing"><?php esc_html_e( 'Preserve theme bullets', 'table-of-contents-plus' ); ?></label></th>
 		<td><input type="checkbox" value="1" id="bullet_spacing" name="bullet_spacing"<?php if ( $this->options['bullet_spacing'] ) echo ' checked="checked"'; ?> /><label for="bullet_spacing"> <?php esc_html_e( 'If your theme includes background images for unordered list elements, enable this to support them', 'table-of-contents-plus' ); ?></label></td>
 	</tr>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	}
+
+	// ************ FI
+	?>
+
 	<tr>
 		<th><?php esc_html_e( 'Heading levels', 'table-of-contents-plus' ); ?></th>
 		<td>
@@ -1089,6 +1217,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			</ul>
 		</td>
 	</tr>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	if ( is_xtec_super_admin() ) {
+
+	// ************ FI
+	?>
+
 	<tr id="smooth_scroll_offset_tr" class="<?php if ( ! $this->options['smooth_scroll'] ) echo 'disabled'; ?>">
 		<th><label for="smooth_scroll_offset"><?php esc_html_e( 'Smooth scroll top offset', 'table-of-contents-plus' ); ?></label></th>
 		<td>
@@ -1096,6 +1234,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			<label for="smooth_scroll_offset"><?php esc_html_e( 'If you have a consistent menu across the top of your site, you can adjust the top offset to stop the headings from appearing underneath the top menu. A setting of 30 accommodates the WordPress admin bar. This setting appears after you have enabled smooth scrolling from above.', 'table-of-contents-plus' ); ?></label>
 		</td>
 	</tr>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	}
+
+	// ************ FI
+	?>
+
 	<tr>
 		<th><label for="restrict_path"><?php esc_html_e( 'Restrict path', 'table-of-contents-plus' ); ?></label></th>
 		<td>
@@ -1106,6 +1254,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			esc_html_e( 'Eg: /wiki/, /corporate/annual-reports/', 'table-of-contents-plus' ); ?></span></label>
 		</td>
 	</tr>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	if ( is_xtec_super_admin() ) {
+
+	// ************ FI
+	?>
+
 	<tr>
 		<th><label for="fragment_prefix"><?php esc_html_e( 'Default anchor prefix', 'table-of-contents-plus' ); ?></label></th>
 		<td>
@@ -1117,6 +1275,16 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			esc_html_e( 'Eg: i, toc_index, index, _', 'table-of-contents-plus' ); ?></span></label>
 		</td>
 	</tr>
+
+	<?php
+	// XTEC ************ AFEGIT - Restrict access to all users but xtecadmin
+	// 2017.05.04 @xaviernietosanchez
+
+	}
+
+	// ************ FI
+	?>
+
 	<tr>
 		<th><label for="rest_toc_output"><?php esc_html_e( 'Include in REST requests', 'table-of-contents-plus' ); ?></label></th>
 		<td><input type="checkbox" value="1" id="rest_toc_output" name="rest_toc_output"<?php if ( $this->options['rest_toc_output'] ) echo ' checked="checked"'; ?> /><label for="rest_toc_output"> <?php esc_html_e( 'Allow the table of contents to be included in the output of REST API requests.', 'table-of-contents-plus' ); ?></label></td>
@@ -1617,6 +1785,44 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			}
 		}
 
+		// XTEC ************ AFEGIT - This function returns the number of total headings from the html formatted $content.
+        // 2019.06.25 @nacho
+        public function total_headings(&$find, &$replace, $content = '') {
+            $matches = [];
+
+            // reset the internal collision collection as the_content may have been triggered elsewhere
+            // eg by themes or other plugins that need to read in content such as metadata fields in
+            // the head html tag, or to provide descriptions to twitter/facebook
+            $this->collision_collector = [];
+
+            if ( is_array($find) && is_array($replace) && $content ) {
+                // get all headings, excluding tables
+                // the html spec allows for a maximum of 6 heading depths
+                if ( !preg_match_all('/<table.*?>(.*?)<\/table>/si', $content, $matches)) {
+                    if ( preg_match_all('/(<h([1-6]{1})[^>]*>).*<\/h\2>/msuU', $content, $matches, PREG_SET_ORDER) ) {
+                        // remove undesired headings (if any) as defined by heading_levels
+                        if ( count($this->options['heading_levels']) != 6 ) {
+                            $new_matches = array();
+                            for ($i = 0; $i < count($matches); $i++) {
+                                if ( in_array($matches[$i][2], $this->options['heading_levels']) )
+                                    $new_matches[] = $matches[$i];
+                            }
+                            $matches = $new_matches;
+                        }
+                    }
+                }
+                // remove empty headings
+                $new_matches = [];
+                for ($i = 0; $i < count($matches); $i++) {
+                    if ( trim( strip_tags($matches[$i][0]) ) != false )
+                        $new_matches[] = $matches[$i];
+                }
+                if ( count($matches) != count($new_matches) )
+                    $matches = $new_matches;
+            }
+            return count($matches);
+        }
+        //************ FI
 
 		public function the_content( $content ) {
 			global $post;
@@ -1627,7 +1833,28 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 			$replace             = [];
 			$custom_toc_position = strpos( $content, '<!--TOC-->' );
 
+			// XTEC ************ MODIFICAT - Check if we display the content with toc
+			// 2019.09.30 @nacho
+			$defined_headers = $this->options['start'];
+			$total_headers = $this->total_headings($find, $replace, $content);
+
+			$disable = false;
+			if ( strpos( get_the_content(), '[no_toc]' ) !== false) {
+				$disable = true;
+			}
+
+			$type = get_post_type();
+			if ($this->is_eligible($custom_toc_position) ||
+			(
+				($total_headers >= $defined_headers) && (in_array($type, $this->options['auto_insert_post_types'])) && ($disable == false)
+			)
+			) {
+			
+			//************ ORIGINAL
+			/*
 			if ( $this->is_eligible() ) {
+			*/
+			//************ FI
 
 				$items = $this->extract_headings( $find, $replace, $content );
 
