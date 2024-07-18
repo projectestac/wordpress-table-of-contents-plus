@@ -1770,8 +1770,16 @@ if ( is_xtec_super_admin() ) {
 					( $this->options['include_homepage'] && is_front_page() )
 				) {
 					if ( $this->options['restrict_path'] ) {
-						$requestUri = ! empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-						if ( strpos( $requestUri, $this->options['restrict_path'] ) === 0 ) {
+
+						// XTEC ************ MODIFICAT - Fixed a bug when deciding whether the table of contents is displayed or not
+                        // 2021.04.22 @aginard
+						if ( strpos($_SERVER['REQUEST_URI'], $this->options['restrict_path']) === false ) {
+						// ************ ORIGINAL
+						/*
+						if ( strpos( $_SERVER['REQUEST_URI'], $this->options['restrict_path'] ) === 0 ) {
+						*/
+						// ************ FI
+
 							return true;
 						} else {
 							return false;
