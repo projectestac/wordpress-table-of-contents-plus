@@ -99,7 +99,7 @@ if ( ! class_exists( 'TOC_Plus' ) ) :
 
 				// XTEC ************ MODIFICAT - Change default settings
 				// 2019.03.08 @nacho
-				'restrict_path' => '/docs/',
+				'restrict_path' => '/docs/,/nodes/',
 				// ************ ORIGINAL
 				/*
 				'restrict_path'                      => '',
@@ -1735,15 +1735,17 @@ if ( is_xtec_super_admin() ) {
 				) {
 					if ( $this->options['restrict_path'] ) {
 
-						// XTEC ************ MODIFICAT - Fixed a bug when deciding whether the table of contents is displayed or not
+						// XTEC ************ AFEGIT - Added support for several directories when deciding whether the table of contents is displayed or not
                         // 2021.04.22 @aginard
-						if ( strpos($_SERVER['REQUEST_URI'], $this->options['restrict_path']) === false ) {
-						// ************ ORIGINAL
-						/*
-						if ( strpos( $_SERVER['REQUEST_URI'], $this->options['restrict_path'] ) === 0 ) {
-						*/
-						// ************ FI
+                        $dirs = explode(',', $this->options['restrict_path']);
+                        foreach ($dirs as $dir) {
+                            if (strpos($_SERVER['REQUEST_URI'], $dir) !== false) {
+                                return false; // Stop on first true result
+                            }
+                        }
+                        // ************ FI
 
+						if ( strpos( $_SERVER['REQUEST_URI'], $this->options['restrict_path'] ) === 0 ) {
 							return true;
 						} else {
 							return false;
